@@ -19,10 +19,7 @@
           :question="currentQuestion" 
           :date="today"
           :is-ai-generated="isAiGeneratedQuestion"
-        />
-
-        <!-- AI質問ジェネレーター -->
-        <AIQuestionGenerator 
+          :show-ai-generator="true"
           :memos-list="memosList"
           @question-generated="handleAiQuestionGenerated"
         />
@@ -54,7 +51,6 @@ import { ref, onMounted, computed } from 'vue'
 import QuestionCard from './components/QuestionCard.vue'
 import MemoInput from './components/MemoInput.vue'
 import ReviewPanel from './components/ReviewPanel.vue'
-import AIQuestionGenerator from './components/AIQuestionGenerator.vue'
 import { getTodaysQuestion } from './data/questions.js'
 import { 
   saveMemo, 
