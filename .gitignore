@@ -134,3 +134,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Vue.js / Vite specific
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.log

@@ -45,13 +45,13 @@ git clone https://github.com/your-username/todayQ.git
 cd todayQ
 
 # 依存関係をインストール
-npm install
+yarn
 
 # 開発サーバーを起動
-npm run dev
+yarn dev
 
 # ビルド（本番環境用）
-npm run build
+yarn build
 ```
 
 ## 📁 プロジェクト構成
@@ -87,6 +87,7 @@ src/
 - [ ] メモ入力・保存
 - [ ] 過去の記録表示
 - [ ] ローカルストレージ管理
+- [ ] OpenAPI Keyを設定できるようにし、自分の過去の回答傾向から新しい質問を生み出す
 
 ### Phase 3: 振り返り機能
 - [ ] 週間・月間振り返り
