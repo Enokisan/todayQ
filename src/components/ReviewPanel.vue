@@ -2,7 +2,7 @@
   <div class="review-panel">
     <div class="review-header">
       <h3>過去の振り返り</h3>
-      <span class="memo-count">{{ memosList.length }}日分の記録</span>
+      <span class="memo-count">{{ memosList.length }}こ分の記録</span>
     </div>
     
     <div v-if="memosList.length === 0" class="empty-state">
@@ -14,12 +14,13 @@
     <div v-else class="memos-list">
       <div
         v-for="memo in displayedMemos"
-        :key="memo.date"
+        :key="`${memo.date}-${memo.id}`"
         class="memo-item"
       >
         <div class="memo-date">
           <span class="date-text">{{ formatDisplayDate(memo.date) }}</span>
           <span class="days-ago">{{ getDaysAgo(memo.date) }}</span>
+          <span class="memo-time">{{ formatTime(memo.timestamp) }}</span>
         </div>
         <div class="memo-content">
           <p class="memo-text">{{ memo.memo }}</p>
@@ -33,7 +34,7 @@
             問いを見る
           </button>
           <button 
-            @click="deleteMemo(memo.date)"
+            @click="deleteMemo(memo.id, memo.date)"
             class="btn-delete"
             title="削除"
           >
@@ -95,6 +96,14 @@ const formatDisplayDate = (dateString) => {
   })
 }
 
+const formatTime = (timestamp) => {
+  const date = new Date(timestamp)
+  return date.toLocaleTimeString('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 const getDaysAgo = (dateString) => {
   const date = new Date(dateString)
   const today = new Date()
@@ -113,9 +122,9 @@ const loadMore = () => {
   displayLimit.value += 5
 }
 
-const deleteMemo = (date) => {
+const deleteMemo = (memoId, date) => {
   if (confirm('この記録を削除しますか？')) {
-    emit('delete-memo', date)
+    emit('delete-memo', { id: memoId, date: date })
   }
 }
 
@@ -205,6 +214,8 @@ const closeQuestionModal = () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .date-text {
@@ -216,6 +227,15 @@ const closeQuestionModal = () => {
 .days-ago {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.memo-time {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 8px;
+  margin-left: auto;
 }
 
 .memo-content {

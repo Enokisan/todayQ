@@ -60,7 +60,8 @@ import {
   saveMemo, 
   getTodaysMemo, 
   getMemosList, 
-  deleteMemo, 
+  deleteMemo,
+  deleteMemoById, 
   getTodayString 
 } from './utils/storage.js'
 
@@ -79,8 +80,9 @@ const currentQuestion = computed(() =>
 
 // メソッド
 const loadTodaysMemo = () => {
-  const memo = getTodaysMemo()
-  currentMemo.value = memo ? memo.memo : ''
+  // 新しい複数メモ対応で配列が返されるので、最新のメモを取得
+  const memos = getTodaysMemo()
+  currentMemo.value = ''
 }
 
 const loadMemosList = () => {
@@ -91,18 +93,26 @@ const handleSaveMemo = (memo) => {
   const todayString = getTodayString()
   saveMemo(todayString, memo)
   loadMemosList()
+  // メモを保存後、入力フィールドをクリア
+  currentMemo.value = ''
 }
 
 const handleClearMemo = () => {
   currentMemo.value = ''
 }
 
-const handleDeleteMemo = (date) => {
-  deleteMemo(date)
+const handleDeleteMemo = (memoData) => {
+  if (memoData.id) {
+    // 個別のメモを削除
+    deleteMemoById(memoData.date, memoData.id)
+  } else {
+    // 日付ごとの削除（後方互換性のため）
+    deleteMemo(memoData.date || memoData)
+  }
   loadMemosList()
   
   // 今日のメモが削除された場合、現在のメモもクリア
-  if (date === getTodayString()) {
+  if ((memoData.date || memoData) === getTodayString()) {
     currentMemo.value = ''
   }
 }
