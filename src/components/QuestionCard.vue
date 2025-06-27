@@ -1,5 +1,5 @@
 <template>
-  <div class="question-card">
+  <div class="question-card" :class="{ 'ai-generated': isAiGenerated }">
     <div class="date-info">
       {{ formattedDate }}
     </div>
@@ -7,7 +7,10 @@
       <h2 class="question-text">{{ question }}</h2>
     </div>
     <div class="question-footer">
-      <span class="today-label">今日の問い</span>
+      <span class="today-label" :class="{ 'ai-label': isAiGenerated }">
+        {{ isAiGenerated ? 'AI生成質問' : '今日の問い' }}
+      </span>
+      <span v-if="isAiGenerated" class="ai-icon">🤖</span>
     </div>
   </div>
 </template>
@@ -23,6 +26,10 @@ const props = defineProps({
   date: {
     type: Date,
     default: () => new Date()
+  },
+  isAiGenerated: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -58,6 +65,14 @@ const formattedDate = computed(() => {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.question-card.ai-generated::before {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.question-card.ai-generated {
+  border-color: rgba(79, 70, 229, 0.3);
 }
 
 .question-card:hover {
@@ -104,6 +119,22 @@ const formattedDate = computed(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
+}
+
+.today-label.ai-label {
+  background: rgba(79, 70, 229, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ai-icon {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 @media (max-width: 768px) {

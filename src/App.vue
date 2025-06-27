@@ -16,8 +16,15 @@
       <div class="content-container">
         <!-- 今日の問いカード -->
         <QuestionCard 
-          :question="todaysQuestion" 
+          :question="currentQuestion" 
           :date="today"
+          :is-ai-generated="isAiGeneratedQuestion"
+        />
+
+        <!-- AI質問ジェネレーター -->
+        <AIQuestionGenerator 
+          :memos-list="memosList"
+          @question-generated="handleAiQuestionGenerated"
         />
 
         <!-- メモ入力フォーム -->
@@ -37,7 +44,7 @@
 
     <!-- フッター -->
     <footer class="app-footer">
-      <p>&copy; 2024 todayQ - 思考を深める習慣</p>
+      <p>&copy; 2025 todayQ - Enokisan</p>
     </footer>
   </div>
 </template>
@@ -47,6 +54,7 @@ import { ref, onMounted, computed } from 'vue'
 import QuestionCard from './components/QuestionCard.vue'
 import MemoInput from './components/MemoInput.vue'
 import ReviewPanel from './components/ReviewPanel.vue'
+import AIQuestionGenerator from './components/AIQuestionGenerator.vue'
 import { getTodaysQuestion } from './data/questions.js'
 import { 
   saveMemo, 
@@ -60,9 +68,14 @@ import {
 const today = ref(new Date())
 const currentMemo = ref('')
 const memosList = ref([])
+const aiGeneratedQuestion = ref('')
+const isAiGeneratedQuestion = ref(false)
 
 // 計算されたプロパティ
 const todaysQuestion = computed(() => getTodaysQuestion())
+const currentQuestion = computed(() => 
+  isAiGeneratedQuestion.value ? aiGeneratedQuestion.value : todaysQuestion.value
+)
 
 // メソッド
 const loadTodaysMemo = () => {
@@ -94,6 +107,13 @@ const handleDeleteMemo = (date) => {
   }
 }
 
+const handleAiQuestionGenerated = (question) => {
+  aiGeneratedQuestion.value = question
+  isAiGeneratedQuestion.value = true
+  // 新しい質問になったので、現在のメモをクリア
+  currentMemo.value = ''
+}
+
 // ライフサイクル
 onMounted(() => {
   loadTodaysMemo()
@@ -105,6 +125,9 @@ onMounted(() => {
     if (newToday.toDateString() !== today.value.toDateString()) {
       today.value = newToday
       loadTodaysMemo()
+      // 日付が変わったらAI生成質問をリセット
+      isAiGeneratedQuestion.value = false
+      aiGeneratedQuestion.value = ''
     }
   }, 60000) // 1分ごとにチェック
 })
