@@ -10,7 +10,6 @@
       <span class="today-label" :class="{ 'ai-label': isAiGenerated }">
         {{ isAiGenerated ? 'AI生成質問' : '今日の問い' }}
       </span>
-      <span v-if="isAiGenerated" class="ai-icon">🤖</span>
     </div>
   </div>
 </template>
@@ -122,19 +121,22 @@ const formattedDate = computed(() => {
 }
 
 .today-label.ai-label {
-  background: rgba(79, 70, 229, 0.2);
+  background: rgba(79, 70, 229, 0.3);
   color: rgba(255, 255, 255, 0.9);
+  position: relative;
 }
 
-.ai-icon {
-  font-size: 1rem;
-  margin-left: 0.5rem;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+.today-label.ai-label::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #4f46e5;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.6);
 }
 
 @media (max-width: 768px) {

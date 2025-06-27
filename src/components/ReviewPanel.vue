@@ -2,11 +2,11 @@
   <div class="review-panel">
     <div class="review-header">
       <h3>過去の振り返り</h3>
-      <span class="memo-count">{{ memosList.length }}こ分の記録</span>
+      <span class="memo-count">{{ memosList.length }}件の記録</span>
     </div>
     
     <div v-if="memosList.length === 0" class="empty-state">
-      <div class="empty-icon">📝</div>
+      <div class="empty-icon"></div>
       <p>まだ記録がありません</p>
       <p class="empty-subtitle">今日から思考の記録を始めてみましょう</p>
     </div>
@@ -25,12 +25,16 @@
         <div class="memo-content">
           <div v-if="memo.question" class="memo-question">
             <span class="question-label">
-              {{ memo.isAiGenerated ? '🤖 AI生成質問' : '📝 今日の問い' }}
+              <span class="label-icon" :class="memo.isAiGenerated ? 'ai-icon' : 'question-icon'"></span>
+              {{ memo.isAiGenerated ? 'AI生成質問' : '今日の問い' }}
             </span>
             <p class="question-text">{{ memo.question }}</p>
           </div>
           <div class="memo-answer">
-            <span class="answer-label">💭 あなたの思考</span>
+            <span class="answer-label">
+              <span class="label-icon thought-icon"></span>
+              あなたの思考
+            </span>
             <p class="memo-text">{{ memo.memo }}</p>
           </div>
         </div>
@@ -155,8 +159,38 @@ const deleteMemo = (memoId, date) => {
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  margin: 0 auto 1rem;
+  position: relative;
+}
+
+.empty-icon::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 1px;
+}
+
+.empty-icon::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.2) 3px,
+    rgba(255, 255, 255, 0.2) 4px
+  );
 }
 
 .empty-subtitle {
@@ -233,13 +267,56 @@ const deleteMemo = (memoId, date) => {
 
 .question-label,
 .answer-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.label-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.question-icon {
+  background: rgba(102, 126, 234, 0.6);
+}
+
+.ai-icon {
+  background: rgba(79, 70, 229, 0.6);
+  position: relative;
+}
+
+.ai-icon::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: rgba(79, 70, 229, 0.8);
+  border-radius: 1px;
+}
+
+.thought-icon {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.thought-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
 }
 
 .question-text {
@@ -259,45 +336,27 @@ const deleteMemo = (memoId, date) => {
 
 .memo-actions {
   display: flex;
-  gap: 0.75rem;
   justify-content: flex-end;
 }
 
-.btn-link {
-  background: none;
-  border: none;
-  color: #667eea;
-  font-size: 0.75rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.btn-link:hover {
-  background: rgba(102, 126, 234, 0.1);
-  color: #7c8aed;
-}
-
 .btn-delete {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
+  padding: 0.375rem 0.75rem;
+  background: rgba(245, 101, 101, 0.2);
+  border: 1px solid rgba(245, 101, 101, 0.3);
+  color: #fc8181;
+  border-radius: 6px;
   font-size: 0.75rem;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
   transition: all 0.2s ease;
 }
 
 .btn-delete:hover {
-  background: rgba(245, 101, 101, 0.1);
-  color: #fc8181;
+  background: rgba(245, 101, 101, 0.3);
+  border-color: rgba(245, 101, 101, 0.5);
 }
 
 .load-more {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   margin-top: 1rem;
 }
 

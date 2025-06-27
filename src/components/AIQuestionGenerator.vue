@@ -2,7 +2,7 @@
   <div class="ai-question-generator">
     <div class="generator-header">
       <h3 class="generator-title">
-        <span class="ai-icon">🤖</span>
+        <span class="ai-icon"></span>
         AI質問ジェネレーター
       </h3>
       <p class="generator-description">
@@ -13,7 +13,7 @@
     <div class="generator-content">
       <!-- API設定状態 -->
       <div class="api-status" :class="apiStatusClass">
-        <span class="status-icon">{{ apiStatusIcon }}</span>
+        <span class="status-icon" :class="apiStatusIconClass"></span>
         <span class="status-text">{{ apiStatusText }}</span>
       </div>
 
@@ -51,7 +51,10 @@
 
       <!-- 生成された質問 -->
       <div v-if="generatedQuestion" class="generated-question">
-        <h4>🎯 AI生成質問</h4>
+        <h4>
+          <span class="target-icon"></span>
+          AI生成質問
+        </h4>
         <div class="question-content">
           {{ generatedQuestion }}
         </div>
@@ -67,7 +70,7 @@
 
       <!-- エラー表示 -->
       <div v-if="error" class="error-message">
-        <span class="error-icon">⚠️</span>
+        <span class="error-icon"></span>
         {{ error }}
       </div>
     </div>
@@ -103,14 +106,11 @@ const apiStatusClass = computed(() => ({
   'status-checking': apiStatus.value === 'checking'
 }))
 
-const apiStatusIcon = computed(() => {
-  switch (apiStatus.value) {
-    case 'ready': return '✅'
-    case 'error': return '❌'
-    case 'checking': return '🔄'
-    default: return '❓'
-  }
-})
+const apiStatusIconClass = computed(() => ({
+  'status-success': apiStatus.value === 'ready',
+  'status-error': apiStatus.value === 'error',
+  'status-loading': apiStatus.value === 'checking'
+}))
 
 const apiStatusText = computed(() => {
   switch (apiStatus.value) {
@@ -238,7 +238,31 @@ onMounted(async () => {
 }
 
 .ai-icon {
-  font-size: 1.5rem;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border-radius: 4px;
+  position: relative;
+}
+
+.ai-icon::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+}
+
+.ai-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #4f46e5;
+  border-radius: 1px;
 }
 
 .generator-description {
@@ -251,32 +275,135 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .status-ready {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background: rgba(34, 197, 94, 0.1);
+  color: #059669;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .status-error {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.1);
   color: #dc2626;
-  border: 1px solid #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .status-checking {
-  background: #fefce8;
-  color: #a16207;
-  border: 1px solid #fef3c7;
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-success {
+  background: #059669;
+}
+
+.status-success::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 3px;
+  height: 6px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.status-error {
+  background: #dc2626;
+}
+
+.status-error::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 2px;
+  background: white;
+  border-radius: 1px;
+}
+
+.status-loading {
+  background: #2563eb;
+  animation: pulse 2s infinite;
+}
+
+.target-icon {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #4f46e5;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.target-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: #4f46e5;
+  border-radius: 50%;
+}
+
+.error-icon {
+  width: 16px;
+  height: 16px;
+  background: #dc2626;
+  border-radius: 2px;
+  position: relative;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.error-icon::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: white;
+  border-radius: 1px;
+}
+
+.error-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
 }
 
 .trend-analysis {
-  background: #f8fafc;
+  background: rgba(79, 70, 229, 0.05);
+  border: 1px solid rgba(79, 70, 229, 0.1);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -284,8 +411,9 @@ onMounted(async () => {
 
 .trend-analysis h4 {
   margin: 0 0 0.75rem;
-  color: #374151;
+  color: #4f46e5;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .trend-items {
@@ -296,38 +424,41 @@ onMounted(async () => {
 
 .trend-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .trend-label {
-  font-weight: 500;
   color: #6b7280;
-  min-width: 100px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .trend-value {
   color: #374151;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .generator-actions {
   text-align: center;
-  margin: 1rem 0;
+  margin-bottom: 1rem;
 }
 
 .generate-btn {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
   border: none;
-  border-radius: 8px;
   padding: 0.75rem 1.5rem;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
+  transition: all 0.2s ease;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin: 0 auto;
 }
 
 .generate-btn:hover:not(:disabled) {
@@ -336,19 +467,15 @@ onMounted(async () => {
 }
 
 .generate-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-.generate-btn.generating {
-  background: #6b7280;
 }
 
 .loading-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff40;
-  border-top: 2px solid #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -358,81 +485,86 @@ onMounted(async () => {
 }
 
 .generated-question {
-  background: #f0f9ff;
-  border: 1px solid #0ea5e9;
+  background: rgba(79, 70, 229, 0.05);
+  border: 1px solid rgba(79, 70, 229, 0.2);
   border-radius: 12px;
-  padding: 1.5rem;
-  margin-top: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .generated-question h4 {
-  margin: 0 0 1rem;
-  color: #0c4a6e;
+  margin: 0 0 0.75rem;
+  color: #4f46e5;
   font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
 }
 
 .question-content {
   background: white;
-  padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #e0f2fe;
-  font-weight: 500;
+  padding: 1rem;
+  margin-bottom: 1rem;
   color: #374151;
   line-height: 1.6;
-  margin-bottom: 1rem;
+  border: 1px solid rgba(79, 70, 229, 0.1);
 }
 
 .question-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .adopt-btn {
-  background: #059669;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
   border: none;
-  border-radius: 6px;
   padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 0.875rem;
-  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
-  flex: 1;
+  transition: all 0.2s ease;
 }
 
 .adopt-btn:hover {
-  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }
 
 .regenerate-btn {
-  background: #6b7280;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+  border: 1px solid rgba(79, 70, 229, 0.2);
   padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 0.875rem;
-  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
-  flex: 1;
+  transition: all 0.2s ease;
 }
 
 .regenerate-btn:hover {
-  background: #4b5563;
+  background: rgba(79, 70, 229, 0.15);
 }
 
 .error-message {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.1);
   color: #dc2626;
-  border: 1px solid #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
   padding: 0.75rem;
-  margin-top: 1rem;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.875rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 @media (max-width: 768px) {
@@ -446,7 +578,7 @@ onMounted(async () => {
   
   .adopt-btn,
   .regenerate-btn {
-    flex: none;
+    width: 100%;
   }
 }
 </style> 
