@@ -11,8 +11,8 @@ export function getTodayString() {
   return formatDate(new Date());
 }
 
-// メモを保存（1日に複数メモ対応）
-export function saveMemo(date, memo) {
+// メモを保存（質問と回答をセットで保存）
+export function saveMemo(date, memo, question = null, isAiGenerated = false) {
   const memos = getAllMemos();
   
   // その日のメモがない場合は配列を初期化
@@ -23,7 +23,9 @@ export function saveMemo(date, memo) {
   // 新しいメモを配列に追加
   const newMemo = {
     id: Date.now(), // ユニークなIDを生成
+    question: question, // 質問を保存
     memo: memo,
+    isAiGenerated: isAiGenerated, // AI生成かどうかのフラグ
     timestamp: new Date().toISOString()
   };
   
@@ -50,16 +52,30 @@ export function getAllMemos() {
     const stored = localStorage.getItem(STORAGE_KEY);
     const memos = stored ? JSON.parse(stored) : {};
     
-    // 古いフォーマット（オブジェクト）を新しいフォーマット（配列）に変換
+    // 古いフォーマットを新しいフォーマットに変換
     Object.keys(memos).forEach(date => {
       if (memos[date] && !Array.isArray(memos[date])) {
-        // 古いフォーマットを新しいフォーマットに変換
+        // 古いフォーマット（オブジェクト）を新しいフォーマット（配列）に変換
         const oldMemo = memos[date];
         memos[date] = [{
           id: Date.now(),
+          question: null, // 質問情報がない古いメモ
           memo: oldMemo.memo,
+          isAiGenerated: false,
           timestamp: oldMemo.timestamp
         }];
+      } else if (memos[date] && Array.isArray(memos[date])) {
+        // 既存の配列形式のメモも新しいフォーマットに更新
+        memos[date] = memos[date].map(memo => {
+          if (!memo.hasOwnProperty('question')) {
+            return {
+              ...memo,
+              question: null, // 質問情報がない場合はnull
+              isAiGenerated: memo.isAiGenerated || false
+            };
+          }
+          return memo;
+        });
       }
     });
     
@@ -105,7 +121,9 @@ export function getMemosList() {
         result.push({
           date,
           id: memo.id,
+          question: memo.question,
           memo: memo.memo,
+          isAiGenerated: memo.isAiGenerated || false,
           timestamp: memo.timestamp
         });
       });

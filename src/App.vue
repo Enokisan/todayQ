@@ -91,7 +91,10 @@ const loadMemosList = () => {
 
 const handleSaveMemo = (memo) => {
   const todayString = getTodayString()
-  saveMemo(todayString, memo)
+  // 現在の質問を取得（AI生成質問またはデフォルト質問）
+  const currentQuestionText = currentQuestion.value
+  // 質問と回答をセットで保存
+  saveMemo(todayString, memo, currentQuestionText, isAiGeneratedQuestion.value)
   loadMemosList()
   // メモを保存後、入力フィールドをクリア
   currentMemo.value = ''

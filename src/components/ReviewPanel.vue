@@ -23,16 +23,18 @@
           <span class="memo-time">{{ formatTime(memo.timestamp) }}</span>
         </div>
         <div class="memo-content">
-          <p class="memo-text">{{ memo.memo }}</p>
+          <div v-if="memo.question" class="memo-question">
+            <span class="question-label">
+              {{ memo.isAiGenerated ? '🤖 AI生成質問' : '📝 今日の問い' }}
+            </span>
+            <p class="question-text">{{ memo.question }}</p>
+          </div>
+          <div class="memo-answer">
+            <span class="answer-label">💭 あなたの思考</span>
+            <p class="memo-text">{{ memo.memo }}</p>
+          </div>
         </div>
         <div class="memo-actions">
-          <button 
-            @click="showQuestion(memo.date)"
-            class="btn-link"
-            title="その日の問いを見る"
-          >
-            問いを見る
-          </button>
           <button 
             @click="deleteMemo(memo.id, memo.date)"
             class="btn-delete"
@@ -50,24 +52,12 @@
       </div>
     </div>
     
-    <!-- 問い表示モーダル -->
-    <div v-if="showingQuestion" class="modal-overlay" @click="closeQuestionModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h4>{{ formatDisplayDate(selectedDate) }}の問い</h4>
-          <button @click="closeQuestionModal" class="modal-close">×</button>
-        </div>
-        <div class="modal-body">
-          <p class="question-text">{{ selectedQuestion }}</p>
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { getQuestionForDate } from '../data/questions.js'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   memosList: {
@@ -79,9 +69,6 @@ const props = defineProps({
 const emit = defineEmits(['delete-memo'])
 
 const displayLimit = ref(5)
-const showingQuestion = ref(false)
-const selectedDate = ref('')
-const selectedQuestion = ref('')
 
 const displayedMemos = computed(() => {
   return props.memosList.slice(0, displayLimit.value)
@@ -126,19 +113,6 @@ const deleteMemo = (memoId, date) => {
   if (confirm('この記録を削除しますか？')) {
     emit('delete-memo', { id: memoId, date: date })
   }
-}
-
-const showQuestion = (dateString) => {
-  const date = new Date(dateString)
-  selectedDate.value = dateString
-  selectedQuestion.value = getQuestionForDate(date)
-  showingQuestion.value = true
-}
-
-const closeQuestionModal = () => {
-  showingQuestion.value = false
-  selectedDate.value = ''
-  selectedQuestion.value = ''
 }
 </script>
 
@@ -240,6 +214,40 @@ const closeQuestionModal = () => {
 
 .memo-content {
   margin-bottom: 0.75rem;
+}
+
+.memo-question {
+  background: rgba(102, 126, 234, 0.15);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.memo-answer {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.question-label,
+.answer-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.question-text {
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .memo-text {
